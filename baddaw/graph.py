@@ -147,3 +147,8 @@ class Clip:
     def _repr_png_(self):
         from .display import waveform_png
         return waveform_png(self)
+
+    def _repr_mimebundle_(self, include=None, exclude=None):
+        # interactive view in a live kernel; text + png come from the other _repr_ methods
+        from .display import widget_bundle
+        return widget_bundle(self)

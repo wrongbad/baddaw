@@ -9,6 +9,7 @@ class Config:
     def __init__(self):
         self.sample_rate = 48000
         self.root: Path | None = None  # None -> auto-detect (see project.root)
+        self.widgets = True  # interactive clip views in notebooks (falls back to png)
         self._engine = None
         self._output = None
 

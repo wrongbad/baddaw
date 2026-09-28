@@ -7,6 +7,9 @@ import zlib
 
 import numpy as np
 
+from .config import config
+from .graph import op
+
 
 def _clock(seconds: float) -> str:
     m, s = divmod(seconds, 60)
@@ -16,6 +19,34 @@ def _clock(seconds: float) -> str:
 def text_summary(clip) -> str:
     m = clip.meta
     return f"Clip {clip.label()} {m.channels}ch {m.sr}Hz {_clock(m.duration)} ({m.frames} frames)"
+
+
+def _in_kernel() -> bool:
+    try:
+        return get_ipython().kernel is not None  # type: ignore[name-defined]  # noqa: F821
+    except (NameError, AttributeError):
+        return False
+
+
+@op
+def view(clip):
+    """Interactive notebook view (waveform, playhead, selection). Needs the `notebook` extra."""
+    from .ui import ClipView
+    return ClipView(clip)
+
+
+def widget_bundle(clip) -> dict | None:
+    if not (config.widgets and _in_kernel()):
+        return None
+    try:
+        v = view(clip)
+    except ImportError:
+        return None
+    bundle = v._repr_mimebundle_()
+    if isinstance(bundle, tuple):  # anywidget returns (data, metadata)
+        bundle = bundle[0]
+    key = "application/vnd.jupyter.widget-view+json"
+    return {key: bundle[key]}
 
 
 _BG = (255, 255, 255)

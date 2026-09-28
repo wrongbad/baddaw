@@ -11,8 +11,10 @@ dependencies = ["numpy", "soundfile", "soxr"]
 
 [project.optional-dependencies]
 play = ["sounddevice"]
-notebook = ["baddaw[play]", "jupyterlab", "notebook"]
-dev = ["pytest"]
+notebook = ["baddaw[play]", "anywidget", "jupyterlab", "notebook"]
+dev = ["pytest", "anywidget"]
+browser = ["baddaw[dev]", "playwright"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["browser: renders the notebook UI in headless chromium (needs playwright)"]
